@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `trec_text` crate."><meta name="keywords" content="rust, rustlang, rust-lang, trec_text"><title>trec_text - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../trec_text/index.html'><div class='logo-container'><img src='../rust-logo.png' alt='logo'></div></a><p class='location'>Crate trec_text</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all trec_text's items</p></a><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'trec_text', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/trec_text/lib.rs.html#1-401' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>trec_text</a></span></h1><div class='docblock'><p>Parsing TREC Text format.</p>
+<p>TREC Text is a text format containing a sequence of records:
+<code>&lt;DOC&gt; &lt;DOCNO&gt; 0 &lt;/DOCNO&gt; Text body &lt;/DOC&gt;</code></p>
+<h1 id="examples" class="section-header"><a href="#examples">Examples</a></h1>
+<p>Typically, document records will be read from files.
+<a href="struct.Parser.html"><code>Parser</code></a> can be constructer from any structure that implements
+<a href="https://doc.rust-lang.org/std/io/trait.Read.html"><code>Read</code></a>,
+and implements <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html"><code>Iterator</code></a>.</p>
+<p>Because parsing of a record can fail, either due to IO error or corupted records,
+the iterator returns elements of <code>Result&lt;DocumentRecord&gt;</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Cursor</span>;
+
+<span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="string">r#&quot;
+&lt;DOC&gt; &lt;DOCNO&gt; 0 &lt;/DOCNO&gt; zero &lt;/DOC&gt;
+CORRUPTED &lt;DOCNO&gt; 1 &lt;/DOCNO&gt; ten &lt;/DOC&gt;
+&lt;DOC&gt; &lt;DOCNO&gt; 2 &lt;/DOCNO&gt; ten nine &lt;/DOC&gt;
+   &quot;#</span>;
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Parser</span>::<span class="ident">new</span>(<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">input</span>));
+
+<span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="ident">parser</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>()<span class="question-mark">?</span>;
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="ident">document</span>.<span class="ident">docno</span>()), <span class="string">&quot;0&quot;</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="ident">document</span>.<span class="ident">content</span>()), <span class="string">&quot; zero &quot;</span>);
+
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">is_err</span>());
+
+<span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="ident">parser</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>()<span class="question-mark">?</span>;
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="ident">document</span>.<span class="ident">docno</span>()), <span class="string">&quot;2&quot;</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="ident">document</span>.<span class="ident">content</span>()), <span class="string">&quot; ten nine &quot;</span>);
+
+<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">next</span>().<span class="ident">is_none</span>());</pre></div>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.DocumentRecord.html" title='trec_text::DocumentRecord struct'>DocumentRecord</a></td><td class='docblock-short'><p>TREC Text record data.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Parser.html" title='trec_text::Parser struct'>Parser</a></td><td class='docblock-short'><p>TREC Text format parser.</p>
+</td></tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table><tr class='module-item'><td><a class="type" href="type.Result.html" title='trec_text::Result type'>Result</a></td><td class='docblock-short'><p><code>Result&lt;T, Error&gt;</code></p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../";window.currentCrate = "trec_text";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["trec_text"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html\" title=\"trait core::cmp::PartialEq\">PartialEq</a>&lt;<a class=\"struct\" href=\"trec_text/struct.DocumentRecord.html\" title=\"struct trec_text::DocumentRecord\">DocumentRecord</a>&gt; for <a class=\"struct\" href=\"trec_text/struct.DocumentRecord.html\" title=\"struct trec_text::DocumentRecord\">DocumentRecord</a>","synthetic":false,"types":["trec_text::DocumentRecord"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
